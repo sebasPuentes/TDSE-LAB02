@@ -36,14 +36,14 @@ We begin by inspecting feature distributions using boxplots to identify outliers
 *   **Normalization**: Applying Standard Deviation scaling to features like `Cholesterol` and `Age` to ensure efficient gradient descent convergence.
 *   **Feature Selection**: Analyzing correlation heatmaps to identify strong predictors like `Thallium` and `Age`.
 
-### 2. Model Training (From Scratch)
+### 2. Model Training
 We define the sigmoid activation function and cost function manually.
 *   **Gradient Descent**: The core optimization loop minimizes the log-loss error.
 *   **Convergence**: We visualize the Cost vs. Iterations graph.
 
 ### 3. Evaluation & Regularization
 *   **Metrics**: We calculate Precision, Accuracy, Recall, and F1-Score.
-*   **L2 Regularization**: We compare the standard model against a regularized version to observe how penalizing large weights affects the decision boundary, reducing potential overfitting.
+*   **L2 Regularization**: We compare the standard model against a regularized version to observe how penalizing large weights affects.
 
 ## Results
 
@@ -83,7 +83,7 @@ We trained multiple models using pairs of features to visualize decision boundar
 
 ### Regularization Impact
 
-Comparing the unregularized model with the L2-regularized version (λ = 0.1) shows that regularization reduces model complexity while keeping similar performance metrics.
+Comparing the unregularized model with the L2-regularized version shows that regularization reduces model complexity while keeping similar performance metrics.
 
 ## Deployment
 
