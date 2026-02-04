@@ -29,15 +29,19 @@ Follow these steps to configure your workspace:
 
 ## Analytical Workflow
 
-The notebook is structured to guide you through the mathematical and practical aspects of the model.
-
 ### 1. Exploratory Data Analysis (EDA)
-We begin by inspecting feature distributions using boxplots to identify outliers. Key steps include:
+We begin by inspecting feature distributions identifying outliers. Key steps include:
+
+* **Data Analysis**: In several features, we can observe the presence of outliers. One example is cholesterol, where a patient shows a value of 560, which is far above the average. Although this value is extreme, it is clinically relevant because it may indicate a high cardiovascular risk. Similarly, in the Max Heart Rate feature, a minimum value of 70 is observed. While this is uncommon, it can be associated with different types of heart disease.
+
+![alt text](images/eda.png)
+
+*The table represents the minimum and maximum of each characteristic as its average. Additionally, we can visualize the percentage of patients who have heart disease and those who do not.*
+
 *   **Normalization**: Applying Standard Deviation scaling to features like `Cholesterol` and `Age` to ensure efficient gradient descent convergence.
-*   **Feature Selection**: Analyzing correlation heatmaps to identify strong predictors like `Thallium` and `Age`.
 
 ### 2. Model Training
-We define the sigmoid activation function and cost function manually.
+We define the sigmoid function and cost function manually.
 *   **Gradient Descent**: The core optimization loop minimizes the log-loss error.
 *   **Convergence**: We visualize the Cost vs. Iterations graph.
 
@@ -69,7 +73,7 @@ The gradient descent optimization shows clear convergence over iterations. By mo
 
 ### Decision Boundary Visualization
 
-We trained multiple models using pairs of features to visualize decision boundaries in 2D space. These plots illustrate how the model separates patients with and without heart disease.
+We trained multiple models using pairs of features to visualize decision boundaries These plots illustrate how the model separates patients with and without heart disease.
 
 #### Max HR vs Cholesterol
 ![Cholesterol vs Max HR Decision Boundary](images/maxHRvsCholesterol.png)
@@ -85,24 +89,49 @@ We trained multiple models using pairs of features to visualize decision boundar
 
 Comparing the unregularized model with the L2-regularized version shows that regularization reduces model complexity while keeping similar performance metrics.
 
-## Deployment
+## AWS Deployment - SageMaker
 
-This project includes a cloud deployment component using **Amazon SageMaker**.
+### Model Serialization
 
-### SageMaker Pipeline
-1.  **Data Upload**: Uploading processed CSVs to AWS S3.
-2.  **Training Job**: Creating a standard Estimator in SageMaker.
-3.  **Endpoint Creation**: Deploying the model to a real-time HTTPS endpoint.
+After training the logistic regression model, the following components were saved:
 
-### Evidence of Deployment
-*(Pending execution)*
+- **w**: learned weight vector
 
-*   **Training Job**: `[Pending Screenshot]`
-*   **Endpoint Configuration**: `[Pending Screenshot]`
-*   **Inference Test**:
-    *   **Input Vector**: `[Age=60, Sex=1, ChestPain=4, BP=130, Chol=253...]`
-    *   **Prediction**: `Class 1 (Presence)` with probability `0.85`
-    *   **Endpoint Status**: `InService`
+- **b**: bias term
+
+- **mu**: feature-wise mean used for normalization
+
+- **sigma**: feature-wise standard deviation used for normalization
+
+![alt text](images/aws2.png)
+
+Saving normalization parameters is critical to ensure that inference-time inputs are processed identically to training data.
+
+### Packaging the Model for SageMaker
+
+![alt text](images/aws3.png)
+
+This package contains all information required for inference.
+
+### Inference Script
+
+Here we define how SageMaker loads the model and handles prediction requests.
+
+![alt text](images/aws4.png)
+
+- Loads the trained parameters
+
+- Applies the same normalization used during training
+
+- Computes the logistic regression probability output
+
+### SageMaker Upload Limitation
+
+During the deployment stage, the model was packaged into the required model.tar.gz format and prepared for upload to Amazon S3 using the SageMaker SDK. However, when attempting to upload the model artifact to the default SageMaker S3 bucket, the process resulted in a connection timeout.
+
+![alt text](images/aws7.png)
+
+![alt text](images/aws5.png)
 
 ## Built With
 
